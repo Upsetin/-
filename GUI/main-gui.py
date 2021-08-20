@@ -311,7 +311,7 @@ class TestProcessor():
             break
         self.logger.debug("已加载的模块列表：%s" %[mod.name for mod in self.modules])
         self.client="5f582dd3683c2e0ae3aaacee"
-        self.login()
+        self.login(type_="v0")
         params={"t":int(time.time()),"id":self.activity_id}
         json_response=self.session.get("https://%s.univs.cn/cgi-bin/portal/activity/" %self.prefix,params=params).json()
         self.activity_id=json_response["data"]["id"]
@@ -849,7 +849,8 @@ class TestProcessor():
             n="".join(random.choices(string.ascii_letters+string.digits,k=4))
             self.check_verify(mode_id=mode_id,n=n)
             self.submit_verify(mode_id=mode_id,n=n)
-            self.finish(activity_id=activity_id,mode_id=mode_id,race_code=race_code)
+            #self.finish(activity_id=activity_id,mode_id=mode_id,race_code=race_code)
+            self.logger.warning("在结束过程中出现验证")
         elif json_response["code"]==0:
             owner=json_response["data"]["owner"]
             self.logger.info("执行完成，正确数：%d，答题用时：%d 秒" %(owner["correct_amount"],owner["consume_time"]))

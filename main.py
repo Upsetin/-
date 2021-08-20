@@ -377,8 +377,11 @@ def Login():
 
 
 #获取token
-def GetToken(uid=''):
-    url = 'https://ssxx.univs.cn/cgi-bin/authorize/token/?t='+str(int(time.time()))+'&uid=%s'%(uid)
+def GetToken(uid='',uc_token=''):
+    if uc_token=="":
+        url = 'https://ssxx.univs.cn/cgi-bin/authorize/token/?t='+str(int(time.time()))+'&uid=%s'%(uid)
+    else:
+        url = 'https://ssxx.univs.cn/cgi-bin/authorize/token/?t='+str(int(time.time()))+'&uc_token=%s'%(uc_token)
     a = requests.get(url=url)
     global token
     token = a.json()['token']
@@ -450,12 +453,20 @@ def SubmitVerification():
 
 # token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTU4MjU3ODgsImlhdCI6MTYxNTgxNDk4OCwiaXNzIjoiSEVQRTM6QVVUSCIsIm5iZiI6MTYxNTgxNDk4OCwidWlkIjoiNjAxOTQyNjhkMGI2MGI1Nzg4MWU5MjJjIiwibmFtZSI6Ilx1N2M3M1x1OWE2Y1x1Njc5NyIsImNvZGUiOiI2MDE5NDI2OGQwYjYwYjU3ODgxZTkyMmMiLCJpc19wZXJmZWN0Ijp0cnVlfQ.7ehyVRuorstSzZBzAE7Imdgoa_gVmDAS31Wj90l24eI'
 
-
-loginInfo = input('请输入uid或者token「不含Bearer，即后面那一串内容.」\n输入完成后回车:')
+loginInfo=input("请输入uc_token，直接回车以进行token或者uid的输入").strip()
+old=False
+if loginInfo=="":
+    loginInfo = input('请输入uid或者token「不含Bearer，即后面那一串内容.」\n输入完成后回车:')
+    old=True
 
 judge = True
-
-if len(loginInfo) > 200:
+if old==False:
+    try:
+        token=GetToken(uc_token=loginInfo)
+    except:
+        judge=False
+        print("使用uc_token获取token失败")
+elif len(loginInfo) > 200:
     print('已更新token,正在获取信息...')
     token = loginInfo
 else:
